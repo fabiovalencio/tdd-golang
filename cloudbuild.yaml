@@ -1,0 +1,23 @@
+# TEST PULL REQUEST CI
+steps:
+  - id: 'Installing App'
+    name: 'gcr.io/cloud-builders/go'
+    args: ['install', 'sum']
+    env: ['GOPATH=.']
+
+  - id: 'Running Test'
+    name: 'gcr.io/cloud-builders/go'
+    args: ['test', 'sum']
+    env: ['GOPATH=.']
+
+  - id: 'building Image'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '--tag=gcr.io/$PROJECT_ID/go-sum:$SHORT_SHA', '.']
+
+  - id: 'PUSH Image'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['push','gcr.io/$PROJECT_ID/go-sum:$SHORT_SHA']
+
+  - id: 'RUN Container'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['run','gcr.io/$PROJECT_ID/go-sum:$SHORT_SHA']
